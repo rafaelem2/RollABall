@@ -8,21 +8,22 @@ public class PlayerController : MonoBehaviour
 {
     public float speed = 0;
     public TextMeshProUGUI countText;
-    public GameObject winTextObject;
+    public GameOverScreen GameOverScreen;
 
     private Rigidbody rb;
-    private int count;
+    public int count;
     private float movementX;
     private float movementY;
 
     // Start is called before the first frame update
     void Start()
     {
+        Time.timeScale = 1;
         rb = GetComponent<Rigidbody>();
         count = 0;
 
         SetCountText();
-        winTextObject.SetActive(false);
+        
     }
 
     void OnMove(InputValue movementValue)
@@ -38,7 +39,8 @@ public class PlayerController : MonoBehaviour
         countText.text = "Count: " + count.ToString();
         if(count >= 12)
         {
-            winTextObject.SetActive(true);
+            Time.timeScale = 0;
+            GameOver();
         }
     }
 
@@ -58,5 +60,20 @@ public class PlayerController : MonoBehaviour
 
             SetCountText();
         }
+        
+    }
+
+    void OnCollisionEnter(Collision col)
+    {
+        if (col.gameObject.CompareTag("Enemy"))
+        {
+            Time.timeScale = 0;
+            GameOver();
+        }
+    }
+
+    public void GameOver()
+    {
+        GameOverScreen.Setup(count);
     }
 }
